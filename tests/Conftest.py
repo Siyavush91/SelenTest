@@ -15,7 +15,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--browser",
         action="store",
-        default='Safari',
+        default='Сhrome',
         help='Type name of browser on which you want start the tests'
     )
 
@@ -31,30 +31,27 @@ def browser_param(request):
 
 @pytest.fixture
 def driver(request, browser_param):
-    if browser_param == "Chrome":
-        capabilities = DesiredCapabilities.CHROME
-        options = webdriver.ChromeOptions()
-        # options.add_argument("--headless")
-        options.add_argument("--kiosk");
-        dr = webdriver.Chrome(options=options)
-        # dr = webdriver.Chrome()
-
-    elif browser_param == 'Firefox':
-        # dr = webdriver.Firefox()
+    if browser_param == 'Firefox':
         capabilities = DesiredCapabilities.FIREFOX
         options = webdriver.FirefoxOptions()
-        # options.add_argument("--headless")
-        options.add_argument("--kiosk");
+        options.add_argument("--headless")
         dr = webdriver.Firefox(options=options)
-
+        dr.maximize_window()
 
     elif browser_param == 'Safari':
         dr = webdriver.Safari()
 
-    dr.implicitly_wait(30)
-    request.addfinalizer(dr.quit)
-    return dr
+    else:
+        capabilities = DesiredCapabilities.CHROME
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        options.add_argument("--kiosk")
+        dr = webdriver.Chrome(options=options)
 
+    dr.implicitly_wait(10)
+    request.addfinalizer(dr.quit)
+
+    return dr
 
 
 
